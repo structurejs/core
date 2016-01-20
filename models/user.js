@@ -4,6 +4,7 @@ class UserModel extends Model {
 
   beforeCreate(User, user, cb) {
     user.created_at = new Date()
+    user.status     = 'active'
     user.updated_at = new Date()
 
     return cb(null, user)
@@ -25,11 +26,9 @@ class UserModel extends Model {
   }
 
   defineResource() {
-    this.name  = 'user'
-    this.table = 'users'
 
     return {
-      name: this.name,
+      name: this.resourceName,
       table: this.table,
       relations: {
 
@@ -40,7 +39,13 @@ class UserModel extends Model {
 
   }
 
-  delete() {
+  delete(id, cb) {
+
+    this.resource.update(id, {status: 'deleted'})
+      .then(
+        function(data) {cb(null, data)},
+        function(err)  {cb(err)}
+      )
 
   }
 
@@ -54,14 +59,31 @@ class UserModel extends Model {
 
   }
 
-  findAll() {
+  findAll(options = {}, cb) {
+
+    if(!options.status) options.status = 'active'
+
+    this.resource.findAll(options)
+      .then(
+        function(data) {cb(null, data)},
+        function(err)  {cb(err)}
+      )
 
   }
 
-  update() {
+  update(id, pkg, cb) {
+
+    this.resource.update(id, pkg)
+      .then(
+        function(data) {cb(null, data)},
+        function(err)  {cb(err)}
+      )
 
   }
 
 }
+
+UserModel.prototype.resourceName = 'user'
+UserModel.prototype.table = 'users'
 
 export default UserModel

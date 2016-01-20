@@ -6,7 +6,14 @@ class BaseModel {
     this.adapter = adapter
     this.store   = store
 
-    this.resource = this.createResource()
+    // If the resource has not previously been created
+    if(this.resourceName && !this.store.definitions[this.resourceName]) {
+      this.resource = this.createResource()
+    }
+
+    else {
+      this.resource = this.store.definitions[this.resourceName]
+    }
   }
 
   createResource() {
