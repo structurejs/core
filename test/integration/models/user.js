@@ -1,17 +1,14 @@
-import UserModel from '../../../models/user'
+import User from '../../../models/user'
 
-describe('Integration: Model: User', function() {
+describe('Integration: Models: User', function() {
 
   it('should create a user', function(done) {
 
-    var user = new UserModel()
+    var user = new User({firstName: 'Chris'})
 
-    user.create({
-      firstName: 'Chris'
-    }, function(err, res) {
+    user.create(function(err, res) {
 
-      expect(res.firstName).to.equal('Chris')
-      expect(res.status).to.equal('active')
+      expect(res).to.be.an('object')
 
       done()
 
@@ -19,40 +16,16 @@ describe('Integration: Model: User', function() {
 
   })
 
-  it('should find a user by id', function(done) {
+  it('should get by ID', function(done) {
 
-    var user = new UserModel()
+    var user = new User({firstName: 'Chris'})
 
-    user.create({
-      firstName: 'Chris'
-    }, function(err, res) {
+    user.create(function(err, res) {
 
-      user.findOne(res.id, function(err2, res2) {
+      user.get((err, res) => {
 
-        expect(res2.firstName).to.equal('Chris')
-
-        done()
-
-      })
-
-    })
-
-  })
-
-  it('should find user where..', function(done) {
-
-    var user = new UserModel(),
-        firstName = 'Chris' + new Date()
-
-    user.create({
-      firstName
-    }, function(err, res) {
-
-      user.findAll({firstName}, function(err2, res2) {
-
-        expect(res2).to.be.an('array')
-        expect(res2.length).to.equal(1)
-        expect(res2[0].status).to.equal('active')
+        expect(res).to.be.an('object')
+        expect(res.id).to.equal(user.id)
 
         done()
 
@@ -62,67 +35,24 @@ describe('Integration: Model: User', function() {
 
   })
 
-  it.skip('should find all users', function(done) {
-    this.timeout(10000)
+  it('should update by ID', function(done) {
 
-    var user = new UserModel()
+    var user = new User({firstName: 'Chris'})
 
-    user.create({
-      firstName: 'Chris'
-    }, function(err, res) {
+    user.create(function(err, res) {
 
-      user.findAll(function(err2, res2) {
+      user.body = {firstName: 'Christopher'}
 
-        expect(res2).to.be.an('array')
+      user.update((err, res) => {
 
-        done()
-
-      })
-
-    })
-
-  })
-
-  it('should update a user', function(done) {
-
-    var user = new UserModel(),
-        firstName = 'Chris' + new Date()
-
-    user.create({
-      firstName
-    }, function(err, res) {
-
-      var firstName2 = 'Foo' + new Date()
-      user.update(res.id, {firstName: firstName2}, function(err2, res2) {
-
-        expect(res2.firstName).to.equal(firstName2)
+        expect(res).to.be.an('object')
+        expect(res.firstName).to.equal('Christopher')
 
         done()
 
       })
 
     })
-
-  })
-
-  it('should delete a user', function(done) {
-
-    var user = new UserModel(),
-        firstName = 'Chris' + new Date()
-
-        user.create({
-          firstName
-        }, function(err, res) {
-
-          user.delete(res.id, function(err2, res2) {
-
-            expect(res2.status).to.equal('deleted')
-
-            done()
-
-          })
-
-        })
 
   })
 

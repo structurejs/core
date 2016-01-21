@@ -1,35 +1,16 @@
 import Controller from './base'
 
-class UsersController {
+class UsersController extends Controller {
 
-  create() {
-
+  constructor() {
+    super()
   }
 
-  delete() {
+}
 
-  }
-
-  findDispatcher() {
-
-  }
-
-  findAll() {
-
-  }
-
-  findMany() {
-
-  }
-
-  findOne() {
-
-  }
-
-  update() {
-    
-  }
-
+UsersController.prototype.resource = {
+  name: 'user',
+  slug: 'users'
 }
 
 module.exports = UsersController

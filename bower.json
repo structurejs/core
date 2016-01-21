@@ -1,0 +1,32 @@
+{
+  "name": "structure-core",
+  "description": "Build data structures",
+  "main": "index.js",
+  "authors": [
+    "Chris Abrams <mail@chrisabrams.com>"
+  ],
+  "license": "TBD",
+  "keywords": [
+    "data",
+    "structure",
+    "build"
+  ],
+  "homepage": "https://github.com/structurejs/core",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "flat-ui": "~2.2.2",
+    "bootstrap": "~3.3.6",
+    "SpinKit": "spinkit#~1.2.5"
+  }
+}
