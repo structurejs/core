@@ -13,7 +13,7 @@ class PasswordService {
       resource: 'PasswordService'
     })
 
-    bcrypt.genSalt(this.options.genSalt || 10, function PasswordService_genSaltCallback(err, salt) {
+    bcrypt.genSalt(this.options.genSalt || process.env.SALT_FACTOR || 10, function PasswordService_genSaltCallback(err, salt) {
       if(err) {
         return cb(err)
       }
