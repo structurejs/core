@@ -9,7 +9,7 @@ import StreamExtras from '../mixins/stream-extras'
 
 class BaseModel {
 
-  constructor(pkg, options = {}) {
+  constructor(options = {}) {
     this.flowMethods = [
       'create',
       'get',
@@ -27,13 +27,6 @@ class BaseModel {
     this.mixin(Log)
     this.mixin(Scrape)
     this.mixin(StreamExtras)
-
-    if(typeof pkg == 'object') {
-      this.body = Object.assign({}, pkg)
-    }
-    else {
-      this.body = pkg
-    }
 
     this.config = {
       db: {
@@ -89,10 +82,12 @@ class BaseModel {
 
   }
 
-  create(cb) {
+  _create(pkg, cb) {
     var _this = this
 
-    this.query((r) => r.db(this.config.db.name).table(this.table).insert(this.body, {
+    pkg.status = 'active'
+
+    this.query((r) => r.db(this.config.db.name).table(this.table).insert(pkg, {
       durability: 'hard',
       returnChanges: true
     }), function saveCallback(err, res) {
@@ -170,12 +165,18 @@ class BaseModel {
 
   }
 
-  get(id, cb) {
+  _get(id, cb) {
 
     if(arguments.length == 1) {
       id = this.id
       cb = arguments[0]
     }
+
+    if(!id) return cb({
+      message: 'An ID is required',
+      method: 'get',
+      resource: 'BaseModel'
+    })
 
     this.query((r) => r.db(this.config.db.name).table(this.table).get(id), function getCallback(err, res) {
       if(err) return cb(err)
@@ -185,7 +186,7 @@ class BaseModel {
 
   }
 
-  getAll(cb) {
+  _getAll(cb) {
 
     this.query((r) => r.db(this.config.db.name).table(this.table), function getAllCallback(err, res) {
       if(err) return cb(err)
@@ -244,16 +245,19 @@ class BaseModel {
 
       // Pass r so developer has access to it for writing a query
       query(r).run(connection, function modelQueryCallback(err, cursor) {
-        if(err) return cb(err)
+        if(err) {
+          logger.error('Query error', err)
+          return cb(err)
+        }
 
         connection.close()
-
+        //logger.debug('Cursor', cursor)
         /*
         Sometimes RethinkDB returns a cursor, with way more information than needed.
         Sometimes RethinkDB returns just the relevant information.
         */
         // Too much info
-        if(cursor._conn) {
+        if(cursor && cursor._conn) {
           // Break info down to what is needed
           cursor.toArray(function queryCursorToArray(err, res) {
             if(err) return cb(err)
@@ -264,8 +268,6 @@ class BaseModel {
         }
         // Just enough info
         else {
-          if(err) return cb(err)
-
           cb(null, cursor)
         }
 
@@ -275,10 +277,10 @@ class BaseModel {
 
   }
 
-  save(cb) {
+  _save(pkg, cb) {
     var _this = this
 
-    this.query((r) => r.db(this.config.db.name).table(this.table).insert(this.body, {
+    this.query((r) => r.db(this.config.db.name).table(this.table).insert(pkg, {
       durability: 'hard',
       returnChanges: true
     }), function saveCallback(err, res) {
@@ -291,7 +293,7 @@ class BaseModel {
 
   }
 
-  update(id, cb) {
+  _update(id, pkg, cb) {
     var _this = this
 
     if(arguments.length == 1) {
@@ -299,7 +301,16 @@ class BaseModel {
       cb = arguments[0]
     }
 
-    this.query((r) => r.db(this.config.db.name).table(this.table).get(id).update(this.body, {
+    if(!id) {
+      logger.error('Model update missing id', id)
+
+      return cb({
+        message: 'An ID is required',
+        method: 'update'
+      })
+    }
+
+    this.query((r) => r.db(this.config.db.name).table(this.table).get(id).update(pkg, {
       durability: 'hard',
       returnChanges: true
     }), function updateCallback(err, res) {
@@ -315,9 +326,9 @@ class BaseModel {
 
   }
 
-  validate() {
+  validate(pkg = {}) {
 
-    return this.schema.validate(this.body)
+    return this.schema.validate(pkg)
 
   }
 

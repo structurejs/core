@@ -20,7 +20,7 @@ describe('Integration: Models: Base', function() {
 
   it('should create a table (if non-existant)', function(done) {
 
-    var model = new Model(null, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
     done()
 
@@ -42,9 +42,9 @@ describe('Integration: Models: Base', function() {
 
   it('should create', function(done) {
 
-    var model = new Model({foo: 'bar'}, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
-    model.create(function(err, res) {
+    model._create({foo: 'bar'}, function(err, res) {
 
       expect(res).to.be.an('object')
 
@@ -56,11 +56,11 @@ describe('Integration: Models: Base', function() {
 
   it('should get by ID', function(done) {
 
-    var model = new Model({foo: 'bar'}, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
-    model.create(function(err, res) {
+    model._create({foo: 'bar'}, function(err, res) {
 
-      model.get(res.id, (err, res) => {
+      model._get(res.id, (err, res) => {
 
         expect(res).to.be.an('object')
         expect(res.id).to.equal(model.id)
@@ -75,13 +75,11 @@ describe('Integration: Models: Base', function() {
 
   it('should update by ID', function(done) {
 
-    var model = new Model({foo: 'bar'}, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
-    model.create(function(err, res) {
+    model._create({foo: 'bar'}, function(err, res) {
 
-      model.body = {foo: 'baz'}
-
-      model.update(res.id, (err, res) => {
+      model._update(res.id, {foo: 'baz'}, (err, res) => {
 
         expect(res).to.be.an('object')
         expect(res.foo).to.equal('baz')

@@ -8,6 +8,21 @@ class BaseController {
 
   create(req, res, next) {
 
+    var _this = this
+
+    var model = new this.Model(req.body)
+    model.create(function baseControllerCreateCallback(err, resp) {
+
+
+      if(err) {
+        logger.error('err', err)
+        return _this.respondWithError(err, res)
+      }
+
+      _this.respondWithPkg(resp, res)
+
+    })
+
   }
 
   delete(req, res, next) {
@@ -34,12 +49,15 @@ class BaseController {
     var _this = this
 
     let id = req.params.id
-    logger.debug('Controller get id', id)
+
     var model = new this.Model()
     model.get(id, function baseControllerGetCallback(err, resp) {
-      logger.error('err', err)
-      logger.debug('resp', resp)
-      if(err) return _this.respondWithError(err, res)
+
+
+      if(err) {
+        logger.error('err', err)
+        return _this.respondWithError(err, res)
+      }
 
       _this.respondWithPkg(resp, res)
 
@@ -57,16 +75,34 @@ class BaseController {
   }
 
   respondWithError(err, res, options = {}) {
-
+    res.send(404).end()
   }
 
   respondWithPkg(o, res, options = {}) {
+    let pkg = this.pkg(o)
 
-    res.send(this.pkg(o))
+    logger.debug('resp', pkg)
+    res.send(pkg)
 
   }
 
   update(req, res, next) {
+    var _this = this
+
+    let id = req.params.id
+
+    var model = new this.Model(req.body)
+    model.update(id, function baseControllerUpdateCallback(err, resp) {
+
+
+      if(err) {
+        logger.error('err', err)
+        return _this.respondWithError(err, res)
+      }
+
+      _this.respondWithPkg(resp, res)
+
+    })
 
   }
 

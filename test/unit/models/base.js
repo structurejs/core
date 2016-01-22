@@ -2,11 +2,11 @@ import {Schema, type} from 'eisley'
 
 var Model = require('../../../models/base')
 
-describe('Unit: Model', function() {
+describe('Unit: Models: Base', function() {
 
   it('should initialize', function(done) {
 
-    var model = new Model(null, {
+    var model = new Model({
       schema: new Schema({
         foo: type('string')
       }),
@@ -27,13 +27,13 @@ describe('Unit: Model', function() {
 
   it('should validate successfully', function(done) {
 
-    var model = new Model({foo: 'bar'}, {
+    var model = new Model({
       schema: new Schema({
         foo: type('string')
       })
     })
 
-    var valid = model.validate()
+    var valid = model.validate({foo: 'bar'})
 
     expect(typeof valid.err).to.equal('undefined')
 
@@ -43,13 +43,13 @@ describe('Unit: Model', function() {
 
   it('should validate unsuccessfully', function(done) {
 
-    var model = new Model({foo: 2}, {
+    var model = new Model({
       schema: new Schema({
         foo: type('string')
       })
     })
 
-    var valid = model.validate()
+    var valid = model.validate({foo: 2})
 
     expect(valid.err).to.be.an('array')
 

@@ -26,7 +26,6 @@ describe('Integration: Services: Password', function() {
       passwordService.verify(password, hash, function(err, verified) {
 
         expect(verified).to.be.true
-
         done()
 
       })

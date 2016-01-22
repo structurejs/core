@@ -1,7 +1,7 @@
 import Model   from '../../../models/base'
 import request from 'request'
 
-describe('Integration: Models: Flow', function() {
+describe.skip('Integration: Models: Flow', function() {
 
   it('should save', function(done) {
 
