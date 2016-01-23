@@ -72,4 +72,77 @@ describe('Integration: Models: User', function() {
 
   })
 
+  it('should authenticate a user password', function(done) {
+
+    var user = new User()
+
+    var pkg = {
+      firstName: 'Chris',
+      password: 'foo'
+    }
+
+    user.create(pkg, function(err, res) {
+
+      user.authenticate(res.id, pkg.password, function(err, res2) {
+
+        expect(res2).to.be.an('object')
+        expect(res2.hash).to.be.a('string')
+
+        done()
+
+      })
+
+    })
+
+  })
+
+  it('should log in user', function(done) {
+
+    var user = new User()
+
+    var pkg = {
+      firstName: 'Chris',
+      password: 'foo'
+    }
+
+    user.create(pkg, function(err, res) {
+
+      res.password = pkg.password
+      user.login(res, function(err, res2) {
+
+        expect(res2).to.be.an('object')
+        expect(res2.hash).to.be.a('string')
+        expect(res2.token).to.be.a('string')
+
+        done()
+
+      })
+
+    })
+
+  })
+
+  it('should authorize a user', function(done) {
+
+    var user = new User()
+
+    var pkg = {
+      firstName: 'Chris',
+      password: 'foo'
+    }
+
+    user.create(pkg, function(err, res) {
+
+      user.authorize(res.id, res.token, function(err, res2) {
+
+        expect(res2).to.be.a('string')
+
+        done()
+
+      })
+
+    })
+
+  })
+
 })

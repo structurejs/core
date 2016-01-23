@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt'
+import bcrypt          from 'bcrypt'
+import {chalk, logger} from '../lib/logger'
 
 class PasswordService {
 
@@ -19,11 +20,13 @@ class PasswordService {
       10,
     function PasswordService_genSaltCallback(err, salt) {
       if(err) {
+        logger.error('Could not generate salt', err)
         return cb(err)
       }
 
       bcrypt.hash(s, salt, function PasswordService_hashCallback(err, hash) {
         if(err) {
+          logger.error('Could not generate hash', err)
           return cb(err)
         }
 
@@ -39,6 +42,9 @@ class PasswordService {
     bcrypt.compare(s, hash, function PasswordService_compareCallback(err, match) {
 
       if(err) {
+        logger.error('Could not verify password', err)
+        logger.debug('Password', s)
+        logger.debug('Hash', hash)
         return cb(err)
       }
 

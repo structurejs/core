@@ -10,20 +10,59 @@ class UserModel extends Model {
     super(options = {})
   }
 
-  authenticate(id, cb) {
+  authenticate(id, password, cb) {
 
+    var passwordService = new PasswordService()
 
+    this.get(id, function UserModel_authenticateGetCallback(err, user) {
+
+      if(err) {
+        return cb({
+          message: 'Could not get user: ' + id,
+          resource: 'UserModel'
+        })
+      }
+
+      passwordService.verify(password, user.hash, function(err, verified) {
+
+        if(err) {
+          return cb({
+            message: 'Could not verify password for user: ' + id,
+            resource: 'UserModel'
+          })
+        }
+
+        cb(null, user)
+
+      })
+
+    })
 
   }
 
-  authorize() {
+  authorize(id, token, cb) {
 
+    var tokenService = new TokenService()
 
+    tokenService.verify(token, function(err, verified) {
+
+      if(err) {
+        return cb({
+          message: 'Could not authorize user: ' + id,
+          resource: 'UserModel'
+        })
+      }
+
+      cb(null, token)
+
+    })
 
   }
 
-  create(pkg = {}, cb) {
+  create(o = {}, cb) {
     var _this = this
+
+    var pkg = Object.assign({}, o)
 
     // validation
 
@@ -85,12 +124,28 @@ class UserModel extends Model {
 
   }
 
-  login(id, pass, cb) {
+  login(pkg = {}, cb) {
     var _this = this
 
-    this.authenticate(id, pass, function UserModel_loginAuthenticateCallBack(err, token) {
+    async.parallel([
+      this.authenticate.bind(this, pkg.id, pkg.password),
+      this.issueToken.bind(this, pkg.hash)
+    ], function UserModel_loginCallBack(err, res) {
 
+      if(err) {
+        logger.error('Could not log in user', pkg.id)
+        logger.error(err)
 
+        return cb({
+          message: 'Could not log in user',
+          resource: 'UserModel'
+        })
+      }
+
+      var user = res[0]
+      user.token = res[1]
+
+      cb(null, user)
 
     })
 
