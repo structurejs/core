@@ -3,6 +3,7 @@ import User from '../../../models/user'
 describe('Integration: Models: User', function() {
 
   it('should create a user', function(done) {
+    //this.timeout(10000)
 
     var user = new User()
 
@@ -14,6 +15,8 @@ describe('Integration: Models: User', function() {
     user.create(pkg, function(err, res) {
 
       expect(res).to.be.an('object')
+      expect(res.hash).to.be.a('string')
+      expect(res.token).to.be.a('string')
 
       done()
 

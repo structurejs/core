@@ -85,13 +85,14 @@ class BaseModel {
   _create(pkg, cb) {
     var _this = this
 
-    pkg.status = 'active'
-
     this.query((r) => r.db(this.config.db.name).table(this.table).insert(pkg, {
       durability: 'hard',
       returnChanges: true
     }), function saveCallback(err, res) {
-      if(err) return cb(err)
+      if(err) {
+        logger.error('Could not create', err)
+        return cb(err)
+      }
 
       _this.id = res.generated_keys[0]
 

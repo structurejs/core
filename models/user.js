@@ -1,3 +1,4 @@
+import async           from 'async'
 import {chalk, logger} from '../lib/logger'
 import Model           from './base'
 import PasswordService from '../services/password'
@@ -11,17 +12,13 @@ class UserModel extends Model {
 
   authenticate(id, cb) {
 
-    var tokenService = new TokenService()
 
-    var token = tokenService.issue(id)
-
-    if(!token) return cb(false)
-
-    return cb(null, token)
 
   }
 
   authorize() {
+
+
 
   }
 
@@ -44,9 +41,29 @@ class UserModel extends Model {
       }
 
       delete pkg.password // dont want to store actual password
-      pkg.hash = hash
 
-      _this._create(pkg, cb)
+      pkg.hash   = hash
+      pkg.status = 'active'
+
+      async.parallel([
+        _this._create.bind(_this, pkg),
+        _this.issueToken.bind(_this, hash)
+      ], function UserModel_createParallelCallback(err, res) {
+
+        if(err) {
+          logger.error(err)
+          return cb({
+            raw: err,
+            resource: 'UserModel'
+          })
+        }
+
+        var user = res[0]
+        user.token = res[1]
+
+        cb(null, user)
+
+      })
 
     })
 
@@ -54,6 +71,18 @@ class UserModel extends Model {
 
   get() {
     super._get.apply(this, arguments)
+  }
+
+  issueToken(hash, cb) {
+
+    var tokenService = new TokenService()
+
+    var token = tokenService.issue(hash)
+
+    if(!token) return cb(false)
+
+    return cb(null, token)
+
   }
 
   login(id, pass, cb) {
