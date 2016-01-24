@@ -1,14 +1,14 @@
 import Model   from '../../../models/base'
 import request from 'request'
 
-describe.skip('Integration: Models: Flow', function() {
+describe('Integration: Models: Flow', function() {
 
   it('should save', function(done) {
 
-    var model = new Model({foo: 'bar'}, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
     model
-      .flow()
+      .flow({foo: 'bar'})
       .save()
       .on('end', function() {
 
@@ -20,15 +20,15 @@ describe.skip('Integration: Models: Flow', function() {
 
   it('should get by id', function(done) {
 
-    var model = new Model({foo: 'bar'}, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
     model
-      .flow()
+      .flow({foo: 'bar'})
       .save()
       .get()
-      .on('end', function() {
+      .on('end', function(pkg) {
 
-        expect(model.body.foo).to.equal('bar')
+        expect(pkg.foo).to.equal('bar')
 
         done()
 
@@ -38,21 +38,21 @@ describe.skip('Integration: Models: Flow', function() {
 
   it('should update by id', function(done) {
 
-    var model = new Model({foo: 'bar'}, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
     model
-      .flow()
+      .flow({foo: 'bar'})
       .save()
 
       // Just a random middlware to show that `body` changed value
-      .use(function(next) {
-        model.body.foo = 'baz'
-        next()
+      .use(function(pkg, next) {
+        pkg.foo = 'baz'
+        next(null, pkg)
       })
       .update()
-      .on('end', function updateEndCallback() {
+      .on('end', function updateEndCallback(pkg) {
 
-        expect(model.body.foo).to.equal('baz')
+        expect(pkg.foo).to.equal('baz')
 
         done()
 
@@ -63,14 +63,14 @@ describe.skip('Integration: Models: Flow', function() {
   it('should convert a stream to string', function(done) {
     this.timeout(10000)
 
-    var model = new Model(null, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
     model
       .flow()
       .streamToString(request.get('https://bitcoinwisdom.com'))
-      .on('end', function() {
+      .on('end', function(pkg) {
 
-        expect(model.body).to.be.a('string')
+        expect(pkg).to.be.a('string')
 
         done()
       })
@@ -80,7 +80,7 @@ describe.skip('Integration: Models: Flow', function() {
   it('should scrape a string of HTML', function(done) {
     this.timeout(10000)
 
-    var model = new Model(null, {table: 'foo'})
+    var model = new Model({table: 'foo'})
 
     model
       .flow()
@@ -98,10 +98,10 @@ describe.skip('Integration: Models: Flow', function() {
         }
 
       })
-      .on('end', function() {
+      .on('end', function(pkg) {
 
-        expect(model.body).to.be.an('object')
-        expect(model.body.price).to.be.an('object')
+        expect(pkg).to.be.an('object')
+        expect(pkg.price).to.be.an('object')
 
         done()
       })

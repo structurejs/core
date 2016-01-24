@@ -101,8 +101,9 @@ class BaseModel {
 
   }
 
-  flow() {
+  flow(pkg) {
     var _this = this
+    this.body = pkg
 
     /*
     Methods in `flowMethods` are wrapped with `use` to enable chaining.
@@ -115,7 +116,7 @@ class BaseModel {
       this.once = _this.once.bind(_this)
       //this.use  = _this.use.bind(_this)
 
-      // In order to retain flow scope, the correct scope needs to be returned
+      // We want to use the .use() method outside of the closure, but otherwise keep the scope inside the closure
       this.use = function flowUse() {
         _this.use.apply(_this, arguments)
 
@@ -133,24 +134,75 @@ class BaseModel {
           /*
           TODO: how to resolve core vs non-core flow methods? This if/else statement is janky
           */
-          if(method == 'get' || method == 'save' || method == 'update') {
-            _this.use(function middlewareUseCallback(next) {
+          let methodWrapList = [
+            'create',
+            '_create',
+            'get',
+            '_get',
+            'save',
+            '_save',
+            'update',
+            '_update'
+          ]
+          //logger.debug(`Method ${method} is wrapped?`, methodWrapList.indexOf(method) > -1)
+          if(methodWrapList.indexOf(method) > -1) {
+            _this.use(function middlewareUseCallback(pkg, next) {
 
-              _this[method].call(_this, function middlewareMethodCallback(err, res) {
-                if(err) return _this.emit('error', err)
+              // If the method exists, wrap it
+              if(_this[method]) {
+                _this[method].call(_this, function middlewareMethodCallback(err, res) {
+                  if(err) {
+                    logger.error('Middleware error', err)
+                    return _this.emit('error', err)
+                  }
 
-                next()
-              })
+                  next(null, pkg)
+                })
+              }
+
+              // If the method is actually a base model _method
+              // TODO: This is janky
+              else if(_this[`_${method}`]) {
+                //logger.debug(`Method ${method} being wrapped as _${method}`)
+                _this[`_${method}`].call(_this, function middlewareMethodCallback(err, res) {
+                  if(err) {
+                    logger.error('Middleware error', err)
+                    return _this.emit('error', err)
+                  }
+
+                  next(null, pkg)
+                })
+              }
+
+              // Can't wrap which can't be found
+              else {
+                var err = `Cannot wrap method ${method}; method cannot be found`
+                logger.error(err)
+                return _this.emit('error', err)
+              }
+
             })
           }
 
           else {
-            _this[method].apply(_this, arguments)
+
+            // If the method exists, apply it
+            if(_this[method]) {
+              _this[method].apply(_this, arguments)
+            }
+
+            // Can't wrap which can't be found
+            else {
+              var err = `Cannot wrap apply ${method}; method cannot be found`
+              logger.error(err)
+              return _this.emit('error', err)
+            }
+
           }
 
           // If this is the first method in the series, start the series
           // TODO: would be nice to find another way to kick things off
-          if(_this.currentMiddlewareLayer == 0) _this.next()
+          if(_this.currentMiddlewareLayer == 0) _this.next(null, pkg)
 
           return this
 
@@ -281,15 +333,23 @@ class BaseModel {
   _save(pkg, cb) {
     var _this = this
 
+    if(arguments.length == 1) {
+      pkg = this.body
+      cb = arguments[0]
+    }
+
     this.query((r) => r.db(this.config.db.name).table(this.table).insert(pkg, {
       durability: 'hard',
       returnChanges: true
     }), function saveCallback(err, res) {
-      if(err) return cb(err)
+      if(err) {
+        logger.error('Could not save', err)
+        return cb(err)
+      }
 
       _this.id = res.generated_keys[0]
 
-      cb(null, res)
+      cb(null, res.changes[0].new_val)
     })
 
   }
@@ -298,8 +358,9 @@ class BaseModel {
     var _this = this
 
     if(arguments.length == 1) {
-      id = this.id
-      cb = arguments[0]
+      id  = this.id
+      pkg = this.body
+      cb  = arguments[0]
     }
 
     if(!id) {

@@ -5,12 +5,17 @@ class Scrape {
   scrape(operations) {
     var _this = this
 
-    this.use((next) => {
+    this.use((pkg, next) => {
 
-      var $ = cheerio.load(_this.body)
-      _this.body = operations.call(_this, $)
+      try {
+        var $ = cheerio.load(pkg)
+        pkg = operations.call(_this, $)
 
-      next()
+        next(null, pkg)
+      }
+      catch(e) {
+        next(e)
+      }
 
     })
 

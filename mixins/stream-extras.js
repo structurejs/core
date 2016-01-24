@@ -7,7 +7,7 @@ class StreamExtras {
     var chunks = '',
         _this  = this
 
-    this.use((next) => {
+    this.use((pkg, next) => {
 
       stream
         .pipe(through2({objectMode: true, allowHalfOpen: false}, function streamChunkCallback(chunk, enc, t2cb) {
@@ -20,10 +20,11 @@ class StreamExtras {
           //console.log('do we have something?', data)
         })
         .on('end', function onEndCallback() {
-
-          _this.body = chunks
-          next()
-
+          pkg = chunks
+          next(null, pkg)
+        })
+        .on('error', function onErrorCallback(err) {
+          next(err)
         })
 
     })

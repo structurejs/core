@@ -1,11 +1,15 @@
 class Middleware {
 
-  next() {
+  next(err, pkg) {
+
+    if(err) {
+      return this.emit('error', err)
+    }
 
     // Have all the middleware run?
     if(this.middlewareLayers.length == this.currentMiddlewareLayer) {
 
-      if(this.emit) this.emit('end')
+      if(this.emit) this.emit('end', pkg)
 
       // Reset so middleware can make another run if need be
       this.currentMiddlewareLayer = 0
@@ -23,13 +27,13 @@ class Middleware {
     // The next middleware was found
     if(nextMiddleware) {
 
-      nextMiddleware.call(this, this.next.bind(this))
+      nextMiddleware.call(this, pkg, this.next.bind(this))
 
     }
 
     // The next middleware was not found; this is a developer error
     else {
-      // do some error
+      return this.emit('error', err)
     }
 
   }
