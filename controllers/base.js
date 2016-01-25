@@ -4,7 +4,9 @@ import PackageService  from '../services/package'
 class BaseController {
 
   constructor() {
-    this.Model = require(`../models/${this.resource.name}`).default
+    var Model = null
+    if(this.resource.model) Model = require(`../models/${this.resource.name}`)
+    if(Model) this.Model = Model.default
   }
 
   create(req, res, next) {
@@ -105,6 +107,7 @@ class BaseController {
 }
 
 BaseController.prototype.resource = {
+  model: true,
   name: 'base',
   slug: 'base'
 }
