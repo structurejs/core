@@ -48,6 +48,7 @@
     "babel-loader": "^6.2.1",
     "babel-polyfill": "^6.3.14",
     "chai": "^3.4.1",
+    "chance": "^0.8.0",
     "chunk-manifest-webpack-plugin": "0.0.1",
     "file-loader": "^0.8.5",
     "gulp": "^3.9.0",

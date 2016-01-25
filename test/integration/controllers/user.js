@@ -1,58 +1,107 @@
+import {Res, next}    from '../../helpers/expressObjects'
 import UserController from '../../../controllers/users'
+import UserGenerator  from '../../helpers/userGenerator'
 
-describe.skip('Integration: Controllers: User', function() {
+describe('Integration: Controllers: User', function() {
 
-  it.skip('should create a user', function(done) {
+  it('should create a user', function(done) {
 
-    var user = new User()
+    var userController = new UserController()
 
-    user.create(function(err, res) {
+    var req = {
+      body: new UserGenerator()
+    }
 
-      expect(res).to.be.an('object')
+    var res = new Res()
+    res.send = function(o) {
+      expect(o).to.be.an('object')
+      expect(o.pkg).to.be.an('object')
 
       done()
 
-    })
+      return this
+    }
+
+    userController.create(req, res, next)
 
   })
 
-  it.skip('should get by ID', function(done) {
+  it('should get user by ID', function(done) {
 
-    var user = new UserController()
+    var userController = new UserController()
 
-    user.create(function(err, res) {
+    var req = {
+      body: new UserGenerator()
+    }
 
-      user.get((err, res) => {
+    var res = new Res()
+    res.send = function(o) {
 
-        expect(res).to.be.an('object')
-        expect(res.id).to.equal(user.id)
+      var req2 = {
+        params: {
+          id: o.pkg.id
+        }
+      }
+
+      var res2 = new Res()
+      res2.send = function(o2) {
+
+        expect(o2).to.be.an('object')
+        expect(o2.pkg).to.be.an('object')
+        expect(o2.pkg.id).to.equal(o.pkg.id)
 
         done()
 
-      })
+        return this
+      }
 
-    })
+      userController.get(req2, res2, next)
+
+      return this
+    }
+
+    userController.create(req, res, next)
 
   })
 
-  it.skip('should update by ID', function(done) {
+  it('should update by ID', function(done) {
 
-    var user = new User({firstName: 'Chris'})
+    var userController = new UserController()
 
-    user.create(function(err, res) {
+    var req = {
+      body: new UserGenerator()
+    }
 
-      user.body = {firstName: 'Christopher'}
+    var res = new Res()
+    res.send = function(o) {
 
-      user.update((err, res) => {
+      var req2 = {
+        body: {
+          firstName: 'Christopher'
+        },
+        params: {
+          id: o.pkg.id
+        }
+      }
 
-        expect(res).to.be.an('object')
-        expect(res.firstName).to.equal('Christopher')
+      var res2 = new Res()
+      res2.send = function(o2) {
+
+        expect(o2).to.be.an('object')
+        expect(o2.pkg).to.be.an('object')
+        expect(o2.pkg.firstName).to.equal('Christopher')
 
         done()
 
-      })
+        return this
+      }
 
-    })
+      userController.update(req2, res2, next)
+
+      return this
+    }
+
+    userController.create(req, res, next)
 
   })
 

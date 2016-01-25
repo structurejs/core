@@ -8,7 +8,7 @@ class TokenService {
 
   }
 
-  issue(s) {
+  issue(s, cb) {
 
     if(typeof s == 'number') s = s.toString()
     if(typeof s != 'string') return false
@@ -17,9 +17,27 @@ class TokenService {
       //expiresInMinutes: 1440 // 24 hours
     })
 
+    if(typeof cb == 'function') {
+      if(!token) return cb(false)
+
+      return cb(null, token)
+    }
+
     return token
 
   }
+
+  /*issueToken(hash, cb) {
+
+    var tokenService = new TokenService()
+
+    var token = tokenService.issue(hash)
+
+    if(!token) return cb(false)
+
+    return cb(null, token)
+
+  }*/
 
   verify(token, cb) {
 

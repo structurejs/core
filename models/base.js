@@ -249,6 +249,16 @@ class BaseModel {
 
   }
 
+  filter(pkg = {}, cb) {
+
+    this.query((r) => r.db(this.config.db.name).table(this.table).filter(pkg), function getCallback(err, res) {
+      if(err) return cb(err)
+
+      cb(null, res)
+    })
+
+  }
+
   mixin(source) {
 
     /*

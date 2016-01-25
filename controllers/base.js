@@ -1,4 +1,5 @@
 import {chalk, logger} from '../lib/logger'
+import PackageService  from '../services/package'
 
 class BaseController {
 
@@ -65,25 +66,20 @@ class BaseController {
 
   }
 
-  pkg(o) {
-
-    return {
-      pkg: o,
-      status: 200
-    }
-
-  }
-
   respondWithError(err, res, options = {}) {
-    res.send(404).end()
+
+    var packageService = new PackageService()
+    let pkg = packageService.error(err, options)
+
+    res.status(pkg.status || 400).send(pkg).end()
   }
 
   respondWithPkg(o, res, options = {}) {
-    let pkg = this.pkg(o)
 
-    logger.debug('resp', pkg)
-    res.send(pkg)
+    var packageService = new PackageService()
+    let pkg = packageService.success(o, options)
 
+    res.status(pkg.status || 200).send(pkg)
   }
 
   update(req, res, next) {
