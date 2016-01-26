@@ -1,5 +1,6 @@
-import AuthService from '../../../services/auth'
-import UserService from '../../../services/user'
+import AuthService     from '../../../services/auth'
+import {UserGenerator} from 'structure-test-helpers'
+import UserService     from '../../../services/user'
 
 describe('Integration: Services: Auth', function() {
 
@@ -8,10 +9,7 @@ describe('Integration: Services: Auth', function() {
     var auth = new AuthService(),
         user = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -33,11 +31,7 @@ describe('Integration: Services: Auth', function() {
     var auth = new AuthService(),
         user = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo',
-      username: 'chris' + new Date()
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -59,10 +53,7 @@ describe('Integration: Services: Auth', function() {
     var auth = new AuthService(),
         user = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -86,11 +77,7 @@ describe('Integration: Services: Auth', function() {
     var auth = new AuthService(),
         user = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo',
-      username: 'chris' + new Date()
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -114,10 +101,7 @@ describe('Integration: Services: Auth', function() {
     var auth = new AuthService(),
         user = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 

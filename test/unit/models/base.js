@@ -1,6 +1,6 @@
 import {Schema, type} from 'eisley'
 
-var Model = require('../../../models/base')
+import Model from '../../../models/base'
 
 describe('Unit: Models: Base', function() {
 

@@ -1,6 +1,6 @@
-import {Res, next}    from '../../helpers/expressObjects'
-import UserController from '../../../controllers/users'
-import UserGenerator  from '../../helpers/userGenerator'
+import {Res, next}     from '../../helpers/expressObjects'
+import UserController  from '../../../controllers/users'
+import {UserGenerator} from 'structure-test-helpers'
 
 describe('Integration: Controllers: User', function() {
 

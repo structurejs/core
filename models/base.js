@@ -406,4 +406,6 @@ class BaseModel {
 
 }
 
-module.exports = BaseModel
+BaseModel.prototype.table = 'foo'
+
+export default BaseModel

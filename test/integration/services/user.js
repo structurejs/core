@@ -1,5 +1,6 @@
-import User        from '../../../models/user'
-import UserService from '../../../services/user'
+import User            from '../../../models/user'
+import {UserGenerator} from 'structure-test-helpers'
+import UserService     from '../../../services/user'
 
 describe('Integration: Services: User', function() {
 
@@ -8,10 +9,7 @@ describe('Integration: Services: User', function() {
 
     var userService = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     userService.create(pkg, function(err, res) {
 
@@ -29,10 +27,7 @@ describe('Integration: Services: User', function() {
 
     var userService = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     userService.create(pkg, function(err, res) {
 
@@ -54,11 +49,7 @@ describe('Integration: Services: User', function() {
 
     var userService = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo',
-      username: 'chris' + new Date()
-    }
+    var pkg = new UserGenerator()
 
     userService.create(pkg, function(err, res) {
 
@@ -80,10 +71,7 @@ describe('Integration: Services: User', function() {
 
     var userService = new UserService()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     userService.create(pkg, function(err, res) {
 

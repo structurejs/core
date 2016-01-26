@@ -5,7 +5,7 @@ class BaseController {
 
   constructor() {
     var Model = null
-    if(this.resource.model) Model = require(`../models/${this.resource.name}`)
+    if(this.resource.model) Model = require(`../models/${this.resource.model}`)
     if(Model) this.Model = Model.default
   }
 
@@ -13,8 +13,9 @@ class BaseController {
 
     var _this = this
 
-    var model = new this.Model(req.body)
-    model.create(function baseControllerCreateCallback(err, resp) {
+    var model = new this.Model()
+
+    model._create(req.body, function baseControllerCreateCallback(err, resp) {
 
 
       if(err) {
@@ -54,7 +55,8 @@ class BaseController {
     let id = req.params.id
 
     var model = new this.Model()
-    model.get(id, function baseControllerGetCallback(err, resp) {
+
+    model._get(id, function baseControllerGetCallback(err, resp) {
 
 
       if(err) {
@@ -89,8 +91,9 @@ class BaseController {
 
     let id = req.params.id
 
-    var model = new this.Model(req.body)
-    model.update(id, function baseControllerUpdateCallback(err, resp) {
+    var model = new this.Model()
+
+    model._update(id, req.body, function baseControllerUpdateCallback(err, resp) {
 
 
       if(err) {
@@ -107,9 +110,9 @@ class BaseController {
 }
 
 BaseController.prototype.resource = {
-  model: true,
-  name: 'base',
-  slug: 'base'
+  model: 'base',
+  name:  'base',
+  slug:  'base'
 }
 
 module.exports = BaseController

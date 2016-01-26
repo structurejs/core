@@ -1,4 +1,5 @@
-import User from '../../../models/user'
+import User            from '../../../models/user'
+import {UserGenerator} from 'structure-test-helpers'
 
 describe('Integration: Models: User', function() {
 
@@ -7,10 +8,7 @@ describe('Integration: Models: User', function() {
 
     var user = new User()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -26,10 +24,7 @@ describe('Integration: Models: User', function() {
 
     var user = new User()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -50,10 +45,7 @@ describe('Integration: Models: User', function() {
 
     var user = new User()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo'
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 
@@ -74,11 +66,7 @@ describe('Integration: Models: User', function() {
 
     var user = new User()
 
-    var pkg = {
-      firstName: 'Chris',
-      password: 'foo',
-      username: 'chris' + new Date()
-    }
+    var pkg = new UserGenerator()
 
     user.create(pkg, function(err, res) {
 

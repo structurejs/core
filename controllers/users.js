@@ -92,8 +92,9 @@ class UsersController extends Controller {
 }
 
 UsersController.prototype.resource = {
-  name: 'user',
-  slug: 'users'
+  model: 'user',
+  name:  'user',
+  slug:  'users'
 }
 
 module.exports = UsersController

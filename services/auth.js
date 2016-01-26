@@ -43,7 +43,7 @@ class AuthService {
         userModel       = new UserModel()
 
     userModel.getByUsername(username, function AuthService_authenticateGetCallback(err, user) {
-
+      logger.debug('USERE HERE 1', user)
       if(err) {
         return cb({
           message: 'Could not get user: ' + username,
@@ -59,7 +59,7 @@ class AuthService {
             resource: 'AuthService'
           })
         }
-
+        logger.debug('USERE HERE 2', user)
         cb(null, user)
 
       })

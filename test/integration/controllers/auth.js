@@ -1,11 +1,11 @@
-import {Res, next}    from '../../helpers/expressObjects'
-import AuthController from '../../../controllers/auth'
-import UserController from '../../../controllers/users'
-import UserGenerator  from '../../helpers/userGenerator'
+import {Res, next}     from '../../helpers/expressObjects'
+import AuthController  from '../../../controllers/auth'
+import UserController  from '../../../controllers/users'
+import {UserGenerator} from 'structure-test-helpers'
 
 describe('Integration: Controllers: Auth', function() {
 
-  it.only('should login a user', function(done) {
+  it('should login a user', function(done) {
 
     var authController = new AuthController(),
         userController = new UserController()

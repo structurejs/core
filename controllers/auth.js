@@ -29,8 +29,9 @@ class AuthController extends Controller {
 }
 
 AuthController.prototype.resource = {
-  name: 'auth',
-  slug: 'auth'
+  model: 'user',
+  name:  'auth',
+  slug:  'auth'
 }
 
-export default AuthController
+module.exports = AuthController
