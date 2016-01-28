@@ -43,6 +43,12 @@ class TemplateController extends Controller {
 
   }
 
+  getDispatcher(req, res, next) {
+
+    return this.get.apply(this, arguments)
+
+  }
+
   update(req, res, next) {
     var _this = this
 
