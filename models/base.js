@@ -42,6 +42,8 @@ class BaseModel {
     this.table  = options.table  || this.table
 
     if(this.table) this.createTable()
+
+    this._version = require('../package.json').version
   }
 
   connect(cb) {
@@ -59,15 +61,17 @@ class BaseModel {
    * @desc Will attempt to create a table with the name from `this.table` if that table name does not already exist
    * @note RethinkDB table creation is not 'instant' - if this function fires multiple times too quickly, there is no guarantee of the table list check will be accurate
    */
-  createTable(cb) {
+  createTable(table, cb) {
     var _this = this
     // TODO: should a model require a table?
     //if(!this.table) return console.error('Model requires a table')
 
+    if(arguments.length == 1) cb = arguments[0]
+
     this.query((r) => r.db(_this.config.db.name).tableList(), function tableListCallback(err, tables) {
 
       if(tables.indexOf(_this.table) == -1) {
-        _this.query((r) => r.db(_this.config.db.name).tableCreate(_this.table), function createTableCallback(err, res) {
+        _this.query((r) => r.db(_this.config.db.name).tableCreate(table || _this.table), function createTableCallback(err, res) {
 
           if(cb) {
             if(err) return cb(err)
@@ -249,9 +253,33 @@ class BaseModel {
 
   }
 
+  getByShortId(sid, cb) {
+
+    this.query((r) => r.db(this.config.db.name).table(this.table).filter({sid}).limit(1), function getByShortIdCallback(err, res) {
+
+      if(err) {
+        return cb(err)
+      }
+
+      if(res.length == 0) {
+        return cb({
+          message: 'No resource found',
+          note: `Attempted to look up resource by short id ${sid}`,
+          resource: 'BaseModel'
+        })
+      }
+
+      var resource = res[0]
+
+      cb(null, resource)
+
+    })
+
+  }
+
   filter(pkg = {}, cb) {
 
-    this.query((r) => r.db(this.config.db.name).table(this.table).filter(pkg), function getCallback(err, res) {
+    this.query((r) => r.db(this.config.db.name).table(this.table).filter(pkg), function filterCallback(err, res) {
       if(err) return cb(err)
 
       cb(null, res)
@@ -348,6 +376,9 @@ class BaseModel {
       cb = arguments[0]
     }
 
+    pkg = this.sortObject(pkg)
+    pkg._version = this._version
+
     this.query((r) => r.db(this.config.db.name).table(this.table).insert(pkg, {
       durability: 'hard',
       returnChanges: true
@@ -362,6 +393,24 @@ class BaseModel {
       cb(null, res.changes[0].new_val)
     })
 
+  }
+
+  sortObject(o) {
+    var sorted = {},
+        key,
+        a = []
+
+    for(key in o) {
+      if(o.hasOwnProperty(key)) a.push(key)
+    }
+
+    a.sort()
+
+    for(key = 0; key < a.length; key++) {
+      sorted[a[key]] = o[a[key]]
+    }
+
+    return sorted
   }
 
   _update(id, pkg, cb) {
@@ -394,6 +443,21 @@ class BaseModel {
       }
 
       cb(null, res)
+    })
+
+  }
+
+  updateByShortId(sid, pkg, cb) {
+    var _this = this
+
+    this.getByShortId(sid, function(err, res) {
+
+      if(err) {
+        return cb(err)
+      }
+
+      _this._update(res.id, pkg, cb)
+
     })
 
   }
