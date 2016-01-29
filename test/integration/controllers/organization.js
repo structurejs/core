@@ -1,15 +1,15 @@
 import {Res, next}         from '../../helpers/expressObjects'
-import TemplateController  from '../../../controllers/templates'
-import {TemplateGenerator} from 'structure-test-helpers'
+import OrganizationController  from '../../../controllers/organizations'
+import {OrganizationGenerator} from 'structure-test-helpers'
 
-describe('Integration: Controllers: Template', function() {
+describe('Integration: Controllers: Organization', function() {
 
-  it('should create a template', function(done) {
+  it('should create a organization', function(done) {
 
-    var templateController = new TemplateController()
+    var organizationController = new OrganizationController()
 
     var req = {
-      body: new TemplateGenerator()
+      body: new OrganizationGenerator()
     }
 
     var res = new Res()
@@ -24,16 +24,16 @@ describe('Integration: Controllers: Template', function() {
       return this
     }
 
-    templateController.create(req, res, next)
+    organizationController.create(req, res, next)
 
   })
 
-  it('should get a template by Short ID', function(done) {
+  it('should get a organization by Short ID', function(done) {
 
-    var templateController = new TemplateController()
+    var organizationController = new OrganizationController()
 
     var req = {
-      body: new TemplateGenerator()
+      body: new OrganizationGenerator()
     }
 
     var res = new Res()
@@ -57,34 +57,25 @@ describe('Integration: Controllers: Template', function() {
         return this
       }
 
-      templateController.get(req2, res2, next)
+      organizationController.get(req2, res2, next)
 
       return this
     }
 
-    templateController.create(req, res, next)
+    organizationController.create(req, res, next)
 
   })
 
-  it('should update a template by Short ID', function(done) {
+  it('should update a organization by Short ID', function(done) {
 
-    var templateController = new TemplateController()
+    var organizationController = new OrganizationController()
 
     var req = {
-      body: new TemplateGenerator()
+      body: new OrganizationGenerator()
     }
 
     var pkg2 = {
-      fields: [
-        {
-          title: 'Field 01',
-          type: 'text-input'
-        },
-        {
-          title: 'Field 02',
-          type: 'text-input'
-        },
-      ]
+      title: 'TT2'
     }
 
     var res = new Res()
@@ -102,19 +93,19 @@ describe('Integration: Controllers: Template', function() {
 
         expect(o2).to.be.an('object')
         expect(o2.pkg).to.be.an('object')
-        expect(o2.pkg.fields[1].type).to.equal('text-input')
+        expect(o2.pkg.title).to.equal('TT2')
 
         done()
 
         return this
       }
 
-      templateController.update(req2, res2, next)
+      organizationController.update(req2, res2, next)
 
       return this
     }
 
-    templateController.create(req, res, next)
+    organizationController.create(req, res, next)
 
   })
 

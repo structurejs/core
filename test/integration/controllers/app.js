@@ -1,15 +1,15 @@
 import {Res, next}         from '../../helpers/expressObjects'
-import TemplateController  from '../../../controllers/templates'
-import {TemplateGenerator} from 'structure-test-helpers'
+import AppController  from '../../../controllers/apps'
+import {AppGenerator} from 'structure-test-helpers'
 
-describe('Integration: Controllers: Template', function() {
+describe('Integration: Controllers: App', function() {
 
-  it('should create a template', function(done) {
+  it('should create a app', function(done) {
 
-    var templateController = new TemplateController()
+    var appController = new AppController()
 
     var req = {
-      body: new TemplateGenerator()
+      body: new AppGenerator()
     }
 
     var res = new Res()
@@ -24,16 +24,16 @@ describe('Integration: Controllers: Template', function() {
       return this
     }
 
-    templateController.create(req, res, next)
+    appController.create(req, res, next)
 
   })
 
-  it('should get a template by Short ID', function(done) {
+  it('should get a app by Short ID', function(done) {
 
-    var templateController = new TemplateController()
+    var appController = new AppController()
 
     var req = {
-      body: new TemplateGenerator()
+      body: new AppGenerator()
     }
 
     var res = new Res()
@@ -57,34 +57,25 @@ describe('Integration: Controllers: Template', function() {
         return this
       }
 
-      templateController.get(req2, res2, next)
+      appController.get(req2, res2, next)
 
       return this
     }
 
-    templateController.create(req, res, next)
+    appController.create(req, res, next)
 
   })
 
-  it('should update a template by Short ID', function(done) {
+  it('should update a app by Short ID', function(done) {
 
-    var templateController = new TemplateController()
+    var appController = new AppController()
 
     var req = {
-      body: new TemplateGenerator()
+      body: new AppGenerator()
     }
 
     var pkg2 = {
-      fields: [
-        {
-          title: 'Field 01',
-          type: 'text-input'
-        },
-        {
-          title: 'Field 02',
-          type: 'text-input'
-        },
-      ]
+      title: 'TT2'
     }
 
     var res = new Res()
@@ -102,19 +93,19 @@ describe('Integration: Controllers: Template', function() {
 
         expect(o2).to.be.an('object')
         expect(o2.pkg).to.be.an('object')
-        expect(o2.pkg.fields[1].type).to.equal('text-input')
+        expect(o2.pkg.title).to.equal('TT2')
 
         done()
 
         return this
       }
 
-      templateController.update(req2, res2, next)
+      appController.update(req2, res2, next)
 
       return this
     }
 
-    templateController.create(req, res, next)
+    appController.create(req, res, next)
 
   })
 
