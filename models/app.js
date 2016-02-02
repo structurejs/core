@@ -2,7 +2,7 @@ import async           from 'async'
 import {chalk, logger} from '../lib/logger'
 import Model           from './base'
 
-class OrganizationModel extends Model {
+class AppModel extends Model {
 
   constructor(options = {}) {
     super(options = {})
@@ -22,6 +22,6 @@ class OrganizationModel extends Model {
 
 }
 
-OrganizationModel.prototype.table = 'organizations'
+AppModel.prototype.table = 'apps'
 
-export default OrganizationModel
+export default AppModel

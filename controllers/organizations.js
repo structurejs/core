@@ -49,6 +49,24 @@ class OrganizationController extends Controller {
 
   }
 
+  list(req, res, next) {
+
+    var _this = this
+
+    var organizationService = new OrganizationService()
+
+    organizationService.list(req.params.limit, function(err, organizations) {
+
+      if(err) {
+        return _this.respondWithError(err, res)
+      }
+
+      _this.respondWithPkg(organizations, res)
+
+    })
+
+  }
+
   update(req, res, next) {
     var _this = this
 

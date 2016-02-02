@@ -2,7 +2,7 @@ import async           from 'async'
 import {chalk, logger} from '../lib/logger'
 import Model           from './base'
 
-class AppModel extends Model {
+class OrganizationModel extends Model {
 
   constructor(options = {}) {
     super(options = {})
@@ -16,12 +16,42 @@ class AppModel extends Model {
     super._get.apply(this, arguments)
   }
 
+  list(limit, cb) {
+    var _this = this
+
+    if(arguments.length == 1) {
+      cb    = arguments[0]
+      limit = null
+    }
+
+    var query = function listQuery(r) {
+
+      var q = r.db(_this.config.db.name).table(_this.table)
+      if(limit) q = q.limit(parseInt(limit))
+      q = q.orderBy(r.desc('date_created'))
+
+      return q
+
+    }
+
+    this.query(query, function listCallback(err, res) {
+      if(err) return cb(err)
+
+      res = res.filter(function(item) {
+        if(item.sid) return item
+      })
+
+      cb(null, res)
+    })
+
+  }
+
   update() {
     super._update.apply(this, arguments)
   }
 
 }
 
-AppModel.prototype.table = 'apps'
+OrganizationModel.prototype.table = 'organizations'
 
-export default AppModel
+export default OrganizationModel

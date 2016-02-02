@@ -59,6 +59,14 @@ class OrganizationService {
     organizationModel.getByShortId.apply(organizationModel, arguments)
   }
 
+  list() {
+
+    var organizationModel = new OrganizationModel()
+
+    organizationModel.list.apply(organizationModel, arguments)
+
+  }
+
   update() {
     var organizationModel = new OrganizationModel()
 

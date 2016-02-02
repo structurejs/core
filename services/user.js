@@ -1,6 +1,7 @@
 import async           from 'async'
 import {chalk, logger} from '../lib/logger'
 import PasswordService from './password'
+import ShortIdService  from '../services/short-id'
 import TokenService    from './token'
 import UserModel       from '../models/user'
 
@@ -14,6 +15,7 @@ class UserService {
     // validation
 
     var passwordService = new PasswordService(),
+        shortidService  = new ShortIdService(),
         tokenService    = new TokenService(),
         userModel       = new UserModel()
 
@@ -31,25 +33,31 @@ class UserService {
       delete pkg.password // dont want to store actual password
 
       pkg.hash   = hash
-      pkg.status = 'active'
 
       async.parallel([
         userModel.create.bind(userModel, pkg),
         tokenService.issue.bind(_this, hash)
       ], function UserService_createParallelCallback(err, res) {
 
-        if(err) {
-          logger.error(err)
-          return cb({
-            raw: err,
-            resource: 'UserModel'
-          })
-        }
-
         var user = res[0]
-        user.token = res[1]
+        var sid  = shortidService.issue(user.id)
 
-        cb(null, user)
+        _this.update(user.id, {sid}, function(err2, res2) {
+
+          if(err) {
+            logger.error(err)
+            return cb({
+              raw: err,
+              resource: 'UserModel'
+            })
+          }
+
+          user       = res2
+          user.token = res[1]
+
+          cb(null, user)
+
+        })
 
       })
 
@@ -63,16 +71,36 @@ class UserService {
     userModel.get.apply(userModel, arguments)
   }
 
+  getByShortId() {
+    var userModel = new UserModel()
+
+    userModel.getByShortId.apply(userModel, arguments)
+  }
+
   getByUsername() {
     var userModel = new UserModel()
 
     userModel.getByUsername.apply(userModel, arguments)
   }
 
+  list() {
+
+    var userModel = new UserModel()
+
+    userModel.list.apply(userModel, arguments)
+
+  }
+
   update() {
     var userModel = new UserModel()
 
     userModel.update.apply(userModel, arguments)
+  }
+
+  updateByShortId() {
+    var userModel = new UserModel()
+
+    userModel.updateByShortId.apply(userModel, arguments)
   }
 
 }

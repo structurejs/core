@@ -45,6 +45,27 @@ describe('Integration: Services: User', function() {
 
   })
 
+  it('should get by Short ID', function(done) {
+
+    var userService = new UserService()
+
+    var pkg = new UserGenerator()
+
+    userService.create(pkg, function(err, res) {
+
+      userService.getByShortId(res.sid, (err, res2) => {
+
+        expect(res2).to.be.an('object')
+        expect(res2.id).to.equal(res.id)
+
+        done()
+
+      })
+
+    })
+
+  })
+
   it('should get by username', function(done) {
 
     var userService = new UserService()
@@ -79,6 +100,31 @@ describe('Integration: Services: User', function() {
 
         expect(res).to.be.an('object')
         expect(res.firstName).to.equal('Christopher')
+
+        done()
+
+      })
+
+    })
+
+  })
+
+  it('should update by Short ID', function(done) {
+
+    var userService = new UserService()
+
+    var pkg = new UserGenerator()
+
+    var pkg2 = {
+      firstName: 'Pablo'
+    }
+
+    userService.create(pkg, function(err, res) {
+
+      userService.updateByShortId(res.sid, pkg2, (err, res) => {
+
+        expect(res).to.be.an('object')
+        expect(res.firstName).to.equal('Pablo')
 
         done()
 

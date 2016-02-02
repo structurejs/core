@@ -33,6 +33,10 @@ class UsersController extends Controller {
       return this.getById.apply(this, arguments)
     }
 
+    if(req.params.sid) {
+      return this.getByShortId.apply(this, arguments)
+    }
+
     if(req.params.username) {
       return this.getByUsername.apply(this, arguments)
     }
@@ -56,6 +60,22 @@ class UsersController extends Controller {
 
   }
 
+  getByShortId(req, res, next) {
+    var _this = this
+
+    var userService = new UserService()
+
+    userService.getByShortId(req.params.sid, function(err, user) {
+
+      if(err) {
+        return _this.respondWithError(err, res)
+      }
+
+      _this.respondWithPkg(user, res)
+
+    })
+  }
+
   getByUsername(req, res, next) {
     var _this = this
 
@@ -68,6 +88,24 @@ class UsersController extends Controller {
       }
 
       _this.respondWithPkg(user, res)
+
+    })
+
+  }
+
+  list(req, res, next) {
+
+    var _this = this
+
+    var userService = new UserService()
+
+    userService.list(req.params.limit, function(err, users) {
+
+      if(err) {
+        return _this.respondWithError(err, res)
+      }
+
+      _this.respondWithPkg(users, res)
 
     })
 

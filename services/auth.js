@@ -45,6 +45,7 @@ class AuthService {
     userModel.getByUsername(username, function AuthService_authenticateGetCallback(err, user) {
 
       if(err) {
+        logger.error('Could not get user', username)
         return cb({
           message: 'Could not get user: ' + username,
           resource: 'AuthService'
@@ -54,12 +55,13 @@ class AuthService {
       passwordService.verify(password, user.hash, function(err, verified) {
 
         if(err) {
+          logger.error('Could not validate password for user', username)
           return cb({
             message: 'Could not verify password for user: ' + username,
             resource: 'AuthService'
           })
         }
-
+        logger.debug('auth by user/pass its ok', user)
         cb(null, user)
 
       })
@@ -102,7 +104,7 @@ class AuthService {
       this.authenticateById.bind(this, id, pkg.password),
       tokenService.issue.bind(tokenService, pkg.hash)
     ], function AuthService_loginByIdCallBack(err, res) {
-
+      logger.debug('hit parallel call')
       if(err) {
         logger.error('Could not log in user', id)
         logger.error(err)
@@ -135,7 +137,7 @@ class AuthService {
 
     async.parallel([
       this.authenticateByUsername.bind(this, username, pkg.password),
-      tokenService.issue.bind(tokenService, pkg.hash)
+      //tokenService.issue.bind(tokenService, pkg.hash)
     ], function AuthService_loginByUsernameCallBack(err, res) {
 
       if(err) {
@@ -149,7 +151,7 @@ class AuthService {
       }
 
       var user = res[0]
-      user.token = res[1]
+      //user.token = res[1]
 
       cb(null, user)
 

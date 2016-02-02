@@ -287,6 +287,31 @@ class BaseModel {
 
   }
 
+  list(limit, cb) {
+    var _this = this
+
+    if(arguments.length == 1) {
+      cb    = arguments[0]
+      limit = null
+    }
+
+    var query = function listQuery(r) {
+
+      var q = r.db(_this.config.db.name).table(_this.table)
+      if(limit) q = q.limit(parseInt(limit))
+
+      return q
+
+    }
+
+    this.query(query, function listCallback(err, res) {
+      if(err) return cb(err)
+
+      cb(null, res)
+    })
+
+  }
+
   mixin(source) {
 
     /*

@@ -8,8 +8,9 @@ class UserModel extends Model {
     super(options = {})
   }
 
-  create() {
-    super._create.apply(this, arguments)
+  create(pkg, cb) {
+    pkg._status = 'active'
+    super._create.call(this, pkg, cb)
   }
 
   get() {
@@ -34,6 +35,36 @@ class UserModel extends Model {
       var user = res[0]
 
       cb(null, user)
+    })
+
+  }
+
+  list(limit, cb) {
+    var _this = this
+
+    if(arguments.length == 1) {
+      cb    = arguments[0]
+      limit = null
+    }
+
+    var query = function listQuery(r) {
+
+      var q = r.db(_this.config.db.name).table(_this.table)
+      if(limit) q = q.limit(parseInt(limit))
+      q = q.orderBy(r.asc('lastName'))
+
+      return q
+
+    }
+
+    this.query(query, function listCallback(err, res) {
+      if(err) return cb(err)
+      //logger.debug('res', res)
+      res = res.filter(function(item) {
+        if(item.sid) return item
+      })
+
+      cb(null, res)
     })
 
   }
