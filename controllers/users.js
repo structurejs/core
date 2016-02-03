@@ -116,7 +116,7 @@ class UsersController extends Controller {
 
     var userService = new UserService()
 
-    userService.update(req.params.id, req.body, function(err, user) {
+    userService.updateByShortId(req.params.sid, req.body, function(err, user) {
 
       if(err) {
         return _this.respondWithError(err, res)
