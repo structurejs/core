@@ -28,7 +28,7 @@ class OrganizationModel extends Model {
 
       var q = r.db(_this.config.db.name).table(_this.table)
       if(limit) q = q.limit(parseInt(limit))
-      q = q.orderBy(r.desc('date_created'))
+      q = q.orderBy(r.asc('title'))
 
       return q
 
