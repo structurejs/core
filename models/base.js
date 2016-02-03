@@ -89,6 +89,9 @@ class BaseModel {
   _create(pkg, cb) {
     var _this = this
 
+    pkg.dateCreated = r.now()
+    pkg.dateUpdated  = r.now()
+
     this.query((r) => r.db(this.config.db.name).table(this.table).insert(pkg, {
       durability: 'hard',
       returnChanges: true
@@ -455,6 +458,8 @@ class BaseModel {
         method: 'update'
       })
     }
+
+    pkg.dateUpdated  = r.now()
 
     this.query((r) => r.db(this.config.db.name).table(this.table).get(id).update(pkg, {
       durability: 'hard',
