@@ -99,7 +99,10 @@ class UsersController extends Controller {
 
     var userService = new UserService()
 
-    userService.list(req.params.limit, function(err, users) {
+    userService.list({
+      limit: req.params.limit,
+      organizationId: req.query.organizationId
+    }, function(err, users) {
 
       if(err) {
         return _this.respondWithError(err, res)

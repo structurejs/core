@@ -119,8 +119,10 @@ class UserModel extends Model {
 
   }
 
-  list(limit, cb) {
-    var _this = this
+  list(options = {}, cb) {
+    var _this          = this,
+        limit          = options.limit,
+        organizationId = options.organizationId
 
     if(arguments.length == 1) {
       cb    = arguments[0]
@@ -129,7 +131,7 @@ class UserModel extends Model {
 
     var query = function listQuery(r) {
 
-      var q = r.db(_this.config.db.name).table(_this.table)
+      var q = r.db(_this.config.db.name).table(_this.table).getAll(organizationId, {index: 'organizations'})
       if(limit) q = q.limit(parseInt(limit))
       q = q.orderBy(r.asc('lastName'))
 
