@@ -1,7 +1,8 @@
-import async           from 'async'
-import {chalk, logger} from '../lib/logger'
-import ShortIdService  from '../services/short-id'
-import TemplateModel   from '../models/template'
+import async             from 'async'
+import {chalk, logger}   from '../lib/logger'
+import OrganizationModel from '../models/organization'
+import ShortIdService    from '../services/short-id'
+import TemplateModel     from '../models/template'
 
 class TemplateService {
 
@@ -12,8 +13,8 @@ class TemplateService {
 
     // validation
 
-    var shortidService  = new ShortIdService(),
-        templateModel   = new TemplateModel()
+    var shortidService    = new ShortIdService(),
+        templateModel     = new TemplateModel()
 
     templateModel.create(pkg, function(err, res) {
 
