@@ -41,8 +41,6 @@ class BaseModel {
     this.schema = options.schema || this.schema || null
     this.table  = options.table  || this.table
 
-    if(this.table) this.createTable()
-
     this._version = require('../package.json').version
   }
 
@@ -58,20 +56,18 @@ class BaseModel {
 
   /**
    *
-   * @desc Will attempt to create a table with the name from `this.table` if that table name does not already exist
    * @note RethinkDB table creation is not 'instant' - if this function fires multiple times too quickly, there is no guarantee of the table list check will be accurate
    */
   createTable(table, cb) {
     var _this = this
-    // TODO: should a model require a table?
-    //if(!this.table) return console.error('Model requires a table')
 
     if(arguments.length == 1) cb = arguments[0]
 
     this.query((r) => r.db(_this.config.db.name).tableList(), function tableListCallback(err, tables) {
 
-      if(tables.indexOf(_this.table) == -1) {
-        _this.query((r) => r.db(_this.config.db.name).tableCreate(table || _this.table), function createTableCallback(err, res) {
+      if(tables.indexOf(table) == -1) {
+
+        _this.query((r) => r.db(_this.config.db.name).tableCreate(table), function createTableCallback(err, res) {
 
           if(cb) {
             if(err) return cb(err)
@@ -80,6 +76,11 @@ class BaseModel {
           }
 
         })
+
+      }
+
+      else {
+        cb(null, true)
       }
 
     })

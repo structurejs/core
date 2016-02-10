@@ -28,6 +28,7 @@ gulp.task('mocha', function() {
     .src([
       './test/helpers/runner.js',
       './test/unit/**/*.js',
+      './test/integration/boot.js',
       './test/integration/**/*.js',
     ], {read: false})
     .pipe(mocha({reporter: 'spec'}))
