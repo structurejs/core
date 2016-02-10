@@ -11,7 +11,7 @@ class BootModel extends Model {
   createTables(cb) {
 
     var tables = process.env.RETHINK_DB_TABLES.replace(/\s+/g, '').split(',')
-    console.error('tables', typeof tables)
+
     var processTables = []
 
     tables.forEach( (table) => {
