@@ -61,8 +61,6 @@ class BaseModel {
   createTable(table, cb) {
     var _this = this
 
-    if(arguments.length == 1) cb = arguments[0]
-
     this.query((r) => r.db(_this.config.db.name).tableList(), function tableListCallback(err, tables) {
 
       if(tables.indexOf(table) == -1) {
